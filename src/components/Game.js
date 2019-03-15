@@ -83,6 +83,8 @@ class Game extends React.Component {
             data: data,
             selected: sel,
         })
+
+        this.change();
     }
 
     // функция смены кристаллов
