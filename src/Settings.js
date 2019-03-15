@@ -6,7 +6,7 @@ const settings = {
     ,maxRings: 3
     ,Radius: 40
     ,ActionCount: 500
-    ,ActionSec: 1
+    ,ActionSec: 3
         
 
 }

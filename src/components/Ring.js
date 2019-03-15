@@ -29,17 +29,17 @@ class Ring extends React.Component {
     
 
     render() {
-       console.log( 'this.state.angle', this.props.items.angle)
+       //console.log( 'this.state.angle', this.props.items.angle)
 
         const stl = { 
             zIndex: Math.round(1000 / this.state.data.length), 
-            width: (this.state.data.length/6 * settings.Radius +50)*2, 
-            height: (this.state.data.length/6 * settings.Radius +50)*2,             
-            top: 'calc( 50% - '+ (this.state.data.length/6 * settings.Radius +50) +'px)',
-            left: 'calc( 50% - '+ (this.state.data.length/6 * settings.Radius +50 ) +'px)',
+            width: (this.state.data.length/6 * settings.Radius +settings.Radius/2)*2, 
+            height: (this.state.data.length/6 * settings.Radius +settings.Radius/2)*2,             
+            top: 'calc( 50% - '+ (this.state.data.length/6 * settings.Radius +settings.Radius/2) +'px)',
+            left: 'calc( 50% - '+ (this.state.data.length/6 * settings.Radius +settings.Radius/2 ) +'px)',
 
             transitionProperty: 'transform',
-            transitionDuration: '1s',            
+            transitionDuration: '1000ms',            
             transitionTimingFunction: 'ease-in-out',
             transform: 'rotateZ( '+ this.props.items.angle +'rad )',
          };        
@@ -47,9 +47,11 @@ class Ring extends React.Component {
 
         const crystals = this.state.data.map(
             (component, key) => (
-                <Crystal key={key} idx={key} type={component}
-                    count={this.state.data.length}
-                    handleClick={this.handleClick} 
+                <Crystal key={key} 
+                    idx={key} 
+                    item = {component}
+                    count = {this.state.data.length}
+                    handleClick = {this.handleClick} 
                 />
             )
         );

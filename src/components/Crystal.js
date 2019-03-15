@@ -13,7 +13,7 @@ class Crystal extends React.Component {
     super(props);
     
     let angle = props.idx * Math.PI *2 /props.count;
-    let radius = (props.count/6 * settings.Radius)+50;
+    let radius = (props.count/6 * settings.Radius)+settings.Radius/2;
     
     this.state = {
       coordinate:{  
@@ -21,8 +21,7 @@ class Crystal extends React.Component {
                 (radius - settings.Radius/2)- settings.crystalWidth/2,
         ypos:  (radius) + Math.sin(angle) * 
                 (radius - settings.Radius/2) - settings.crystalHeight/2 ,
-      },
-      type: props.type,
+      },      
       count: props.count,
       angle: angle,
       idx: props.idx,
@@ -35,8 +34,8 @@ class Crystal extends React.Component {
 
   handleClick() {
     console.log('handleClick',  this.state.idx);
-
     this.state.handleRingSelect(this.state.idx);
+
   }
 
   render() {
@@ -47,15 +46,15 @@ class Crystal extends React.Component {
       height: settings.crystalHeight,
       borderRadius: settings.crystalBorderRadius1,
       position: 'absolute',
-      top: this.state.coordinate.ypos - ( (this.props.isSelected)? 10:0),
+      top: this.state.coordinate.ypos - ( (this.props.item.selected)? 10:0),
       left: this.state.coordinate.xpos,     
-      boxShadow: ( (this.props.isSelected)? '0px 0px 36px -1px': '0px 0px 0px 0px'),           
+      boxShadow: ( (this.props.item.selected)? '0px 0px 36px -1px': '0px 0px 0px 0px'),           
       transform: 'rotateZ( '+ this.state.angle +'rad )',
       backgroundSize: 'contain',
       backgroundRepeat: 'no-repeat',
     }
 
-    stl.backgroundImage = "url(" + require("./../arts/crystal_"+ this.state.type+ ".png")+ ")";
+    stl.backgroundImage = "url(" + require("./../arts/crystal_"+ this.props.item.type+ ".png")+ ")";
 
 
 

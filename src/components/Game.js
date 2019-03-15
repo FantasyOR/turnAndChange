@@ -17,14 +17,17 @@ class Game extends React.Component {
             // создаём и заполняем массив кристаллов случайного типа
             let cryOfRing = new Array();
             for (let j = 0; j < (i+1)*6; j++) {            
-                cryOfRing.push(settings.crystalTypes[Math.round(Math.random()*(settings.crystalTypes.length-1))]);            
+                cryOfRing.push({
+                    type: settings.crystalTypes[Math.round(Math.random()*(settings.crystalTypes.length-1))],
+                    selected: false,
+                });            
             }
 
             // добавляем массив кристаллов в массив колец
             crystalsData.push({
                 idx: i,
                 angle: 0,
-                items: cryOfRing
+                items: cryOfRing,                
             });
         }
        
@@ -36,7 +39,7 @@ class Game extends React.Component {
             action.push({
                 ring: (ring<0)? 0: Math.abs(ring),
                 direction: Math.round(Math.random()*2-1),
-                distance: Math.round(Math.random()*3),
+                distance: Math.round(Math.random()*2)+1,
             })
         }
 
@@ -60,14 +63,26 @@ class Game extends React.Component {
 
     handleClick(idRing, idCrystal) {
         console.log("Select", { ring: idRing, crystal: idCrystal })
+        let data =  this.state.data;        
         let sel = this.state.selected;
+
+        // добавляем выделение для нового элемента 
+        //  и добавляем новый элемент в начало списка выделенных
+        data[idRing].items[idCrystal].selected = true; 
         sel.unshift( {ring: idRing, crystal: idCrystal} );
 
+        // если выделенных эжлементов больше 2х, то последний (который был добавлен раньше всех)
+        //  удаляем из массива выделеных и убираем у него выделение
         if (sel.length>2)
         {
-            sel.pop();
+            let last = sel.pop();
+            data[last.ring].items[last.crystal].selected = false; 
         }
-        
+            
+        this.setState({
+            data: data,
+            selected: sel,
+        })
     }
 
     // функция смены кристаллов
@@ -78,7 +93,7 @@ class Game extends React.Component {
 
 
     componentDidMount() {
-        this.timerId = setInterval( ()=> this.tick(), 1000);
+       this.timerId = setInterval( ()=> this.tick(), 1000);
     }
 
 
@@ -107,11 +122,11 @@ class Game extends React.Component {
                 *this.state.actionNow.distance
                 *(2*Math.PI/newData[this.state.actionNow.ring].items.length)
         
-            console.log('is countdown', {
-                action: this.state.actionNow, 
-                oldAngle: this.state.data[this.state.actionNow.ring].angle,
-                newAngle: newData[this.state.actionNow.ring].angle
-            })
+            // console.log('is countdown', {
+            //     action: this.state.actionNow, 
+            //     oldAngle: this.state.data[this.state.actionNow.ring].angle,
+            //     newAngle: newData[this.state.actionNow.ring].angle
+            // })
 
                 
             // если время вышло, то вытаскиваем первый элемент из массива действий и 
