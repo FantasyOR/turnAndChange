@@ -41,7 +41,7 @@ class Ring extends React.Component {
             transitionProperty: 'transform',
             transitionDuration: '1000ms',            
             transitionTimingFunction: 'ease-in-out',
-            transform: 'rotateZ( '+ this.props.items.angle +'rad )',
+            transform: 'rotateZ( '+ this.props.items.angle +'deg )',
          };        
 
 

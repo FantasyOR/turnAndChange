@@ -2,7 +2,7 @@ import React from 'react'
 import settings from "../Settings.js";
 import Ring from './Ring';
 import Timer from './Timer';
-import { truncate } from 'fs';
+
 //import {crystalsData} from "crystalsData.js";
 
 
@@ -10,12 +10,12 @@ class Game extends React.Component {
     constructor(props){
         super(props);
         
-        let crystalsData = new Array();
+        let crystalsData = [];
         // инициализируем массив колец, а затем наполняем каждый массивом кристаллов
         for (let i=0; i < settings.maxRings; i++)
         {
             // создаём и заполняем массив кристаллов случайного типа
-            let cryOfRing = new Array();
+            let cryOfRing = [];
             for (let j = 0; j < (i+1)*6; j++) {            
                 cryOfRing.push({
                     type: settings.crystalTypes[Math.round(Math.random()*(settings.crystalTypes.length-1))],
@@ -26,13 +26,13 @@ class Game extends React.Component {
             // добавляем массив кристаллов в массив колец
             crystalsData.push({
                 idx: i,
-                angle: 0,
+                angle:  (360/cryOfRing.length) * Math.round(Math.random()*2-1) * Math.round(Math.random()*2)+1,
                 items: cryOfRing,                
             });
         }
        
        // let directions = ['clockwise', 'stop', 'counterclockwise']
-        let action = new Array();
+        let action = [];
         for (let i=0; i < settings.ActionCount; i++)
         {
             let ring = Math.round(Math.random()*settings.maxRings-1);
@@ -84,13 +84,54 @@ class Game extends React.Component {
             selected: sel,
         })
 
-        this.change();
+        this.timerChange = setTimeout( ()=> this.change(), 300);
+        
     }
 
     // функция смены кристаллов
-    change()
-    {
-        
+    change() {
+        let data = this.state.data;        
+        let sel = this.state.selected;
+
+        if (sel.length === 2)
+        {
+            // выбираем из матрицы переходов:
+            //  уровень кольца первого выделения, 
+            //  уровень кольца второго выделения,
+            //  уровень сектора первого выделения
+            //  и узнаем в какие ячейки можно перейти
+            let cans = (settings.canChange[sel[0].ring][sel[1].ring]);
+            let canTrue = false;
+
+            if (cans.length>0){
+
+                cans = cans[sel[0].crystal];
+
+                // проверяем все ячейки возмоэного перехода и сравниваем с ячейкой второго выделения
+                cans.forEach(element => {
+                    canTrue |= (sel[1].crystal === element);            
+                });
+
+                if (canTrue)
+                {
+                    //ура эти кристаллы соседи - меняем массив data и снимаем выделения
+                    let type = data[sel[0].ring].items[sel[0].crystal].type;
+                    data[sel[0].ring].items[sel[0].crystal].type = data[sel[1].ring].items[sel[1].crystal].type;
+                    data[sel[1].ring].items[sel[1].crystal].type = type;
+
+                    data[sel[0].ring].items[sel[0].crystal].selected = false;
+                    data[sel[1].ring].items[sel[1].crystal].selected = false;
+
+                    this.setState({
+                        data: data,
+                        selected: [],
+                    })        
+                }
+            }
+        }
+
+
+        return data
     }
 
 
@@ -107,9 +148,9 @@ class Game extends React.Component {
             }          
         });
 
-        if (this.state.countdown ==0)
+        if (this.state.countdown ===0)
         { 
-            if (this.state.actions.length ==0)
+            if (this.state.actions.length ===0)
             {
                 clearInterval(this.timerId);
                 return;
@@ -122,7 +163,7 @@ class Game extends React.Component {
             newData[this.state.actionNow.ring].angle += 
                 this.state.actionNow.direction
                 *this.state.actionNow.distance
-                *(2*Math.PI/newData[this.state.actionNow.ring].items.length)
+                *(360/newData[this.state.actionNow.ring].items.length)
         
             // console.log('is countdown', {
             //     action: this.state.actionNow, 

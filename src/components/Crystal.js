@@ -52,10 +52,21 @@ class Crystal extends React.Component {
       transform: 'rotateZ( '+ this.state.angle +'rad )',
       backgroundSize: 'contain',
       backgroundRepeat: 'no-repeat',
+      backgroundImage: "url(" + require("./../arts/crystal_"+ this.props.item.type+ ".png")+ ")",
+
+      transitionProperty: 'boxShadow, top',
+      transitionDuration: '300ms',            
+      transitionTimingFunction: 'ease-in',            
     }
 
-    stl.backgroundImage = "url(" + require("./../arts/crystal_"+ this.props.item.type+ ".png")+ ")";
+    
 
+    if (this.state.idx === 0)
+    {
+      stl.backgroundColor = "green";
+    }
+
+    
 
 
     return (
